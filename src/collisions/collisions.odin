@@ -75,6 +75,12 @@ Collision_Data :: struct {
 
 // check a collision against two polygons of size N and M
 check_collision :: proc(a: ^Polygon($N), b: ^Polygon($M)) -> Collision_Data {
+	return sat_collision(a, b)
+}
+
+// check for the SAT collision
+@(private)
+sat_collision :: proc(a: ^Polygon($N), b: ^Polygon($M)) -> Collision_Data {
 	// set the min depth to the max value that be stored in an f32
 	// this then lets us check each value to see if it is smaller than the last one
 	// starting at the max number possible
