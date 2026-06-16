@@ -9,6 +9,38 @@ Polygon :: struct($N: i32) {
 	// Having N as a compile time constant allows the comipler to optimize to living shit
 	// while also have dynamic sizes, which a dynamic array would not allow
 	vertices: [N]rl.Vector2,
+	recBounds: rl.Rectangle
+}
+
+@(private)
+AABB :: struct {
+	min, max: rl.Vector2
+}
+
+// Get an AABB struct based on the polygon passed in
+@(private)
+get_polygon_aabb :: proc(poly: ^Polygon($N)) -> AABB {
+	min := poly.vertices[0]
+	max := poly.vertices[0]
+
+	for i := 1; i < int(N); i += 1 {
+		v := poly.vertices[i]
+		if (v.x < min.x) do min.x = v.x
+		if (v.x > max.x) do max.x = v.x
+		if (v.y < min.y) do min.y = v.y
+		if (v.y > max.y) do max.y = v.y
+	}
+
+	return AABB{ min, max }
+}
+
+// check if there is an AABB overlap
+@(private)
+check_aabb_overlap :: proc(box1, box2: AABB) -> bool {
+	if (box1.max.x <= box2.min.x || box2.max.x <= box1.min.x) do return false
+	if (box1.max.y <= box2.min.y || box2.max.y <= box1.min.y) do return false
+
+	return true
 }
 
 // all of the functions to conv different things into polys.
@@ -75,6 +107,8 @@ Collision_Data :: struct {
 
 // check a collision against two polygons of size N and M
 check_collision :: proc(a: ^Polygon($N), b: ^Polygon($M)) -> Collision_Data {
+	if !check_aabb_overlap( get_polygon_aabb(a), get_polygon_aabb(b) ) do return Collision_Data{ collided = false }
+
 	return sat_collision(a, b)
 }
 

@@ -8,7 +8,7 @@ OUTPUT := $(PROJECT_NAME)
 
 build: clear
 	mkdir -p build/
-	odin build src/ -out:build/$(OUTPUT)
+	odin build ./ -out:build/$(OUTPUT)
 
 clear:
 	rm -rf build
