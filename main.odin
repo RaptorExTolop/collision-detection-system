@@ -1,7 +1,7 @@
 package main
 
 import rl "vendor:raylib"
-import col "collisions"
+import col "collision-system"
 
 main :: proc() {
 	rl.InitWindow(1280, 720, "Collision lib")
